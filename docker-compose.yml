@@ -1,0 +1,42 @@
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: scholarsync-postgres
+    environment:
+      POSTGRES_DB: scholarsync
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d scholarsync"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  analysis-service:
+    build:
+      context: ./analysis-service
+      dockerfile: Dockerfile
+    container_name: scholarsync-analysis
+    ports:
+      - "8000:8000"
+    environment:
+      # Set HF_TOKEN in your .env file or environment to enable real AI detection.
+      # Leave empty or omit to run similarity + citation analysis only.
+      HF_TOKEN: ${HF_TOKEN}
+      PORT: 8000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  postgres_data:
