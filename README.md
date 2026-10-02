@@ -10,7 +10,7 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?logo=springboot&logoColor=white)
 ![Spring Security](https://img.shields.io/badge/Spring%20Security-JWT%20%2B%20RBAC-6DB33F?logo=springsecurity&logoColor=white)
 ![WebSocket](https://img.shields.io/badge/WebSocket-STOMP-010101?logo=socketdotio&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL%20%2F%20MySQL-Database-336791?logo=postgresql&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-H2%20for%20dev-336791?logo=postgresql&logoColor=white)
 ![OpenAPI](https://img.shields.io/badge/OpenAPI-3.0-85EA2D?logo=swagger&logoColor=black)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
@@ -119,7 +119,7 @@ Live **WebSocket** sync of board updates and comments, plus a complete **histori
 
 ## 🧪 Automated Document Analysis
 
-Every uploaded PDF/DOCX submission is run through an automated analysis pipeline, and the results are displayed on the version in an **Automated Document Analysis Report**.
+Every uploaded PDF/DOCX submission is sent to a dedicated **analysis service** (configured via `ANALYSIS_SERVICE_URL`), and the results are displayed on the version in an **Automated Document Analysis Report**.
 
 | Check | What it does |
 |-------|--------------|
@@ -213,10 +213,12 @@ Five GoF patterns give the domain model structure, extensibility and SOLID compl
 │  Repository Layer   (Spring Data JPA / Hibernate)        │
 └───────────────┬──────────────────────────┬───────────────┘
                 │                          │
-        ┌───────▼────────┐        ┌────────▼─────────────┐
-        │ PostgreSQL /   │        │ External Services    │
-        │ MySQL          │        │ Hugging Face · Crossref │
-        └────────────────┘        └──────────────────────┘
+        ┌───────▼────────┐        ┌────────▼─────────────────┐
+        │ PostgreSQL     │        │ Document Analysis Service│
+        │ (H2 in dev)    │        │ (HTTP :8000)             │
+        └────────────────┘        │ Similarity · AI detect · │
+                                  │ Crossref citations       │
+                                  └──────────────────────────┘
 ```
 
 ---
@@ -229,10 +231,10 @@ Five GoF patterns give the domain model structure, extensibility and SOLID compl
 | **API Layer** | REST + WebSocket (STOMP) |
 | **Security** | Spring Security · JWT · RBAC |
 | **Persistence** | Spring Data JPA / Hibernate |
-| **Database** | PostgreSQL or MySQL |
+| **Database** | PostgreSQL (production) · H2 in-memory (dev & tests) |
 | **Docs** | OpenAPI 3.0 / Swagger UI |
-| **Frontend** | Single-page web app served by a Vite dev server |
-| **Integrations** | Hugging Face (AI-writing detection) · Crossref REST API (citation verification) |
+| **Frontend** | Single-page web app (Vite dev server, port 5173) |
+| **Analysis Service** | Separate HTTP service (port 8000) using Hugging Face `roberta-base-openai-detector` and the Crossref REST API |
 
 ---
 
@@ -268,15 +270,24 @@ ScholarSync/
 
 ## 🏁 Getting Started
 
+ScholarSync ships with two runtime profiles, so you can try it instantly **without installing a database**.
+
+| Profile | Database | When to use |
+|---------|----------|-------------|
+| `dev` *(default)* | In-memory **H2** (PostgreSQL compatibility mode) | Local development and demos. Data resets on every restart. |
+| any other profile (e.g. `prod`) | **PostgreSQL** | Persistent, production-style deployment. |
+| `test` | In-memory H2 (`create-drop`) | Automated tests. |
+
 ### Prerequisites
 
-| Tool | Version |
-|------|---------|
-| Java JDK | 17 or later |
-| Maven | 3.8+ (or use the included wrapper) |
-| Node.js & npm | 18+ |
-| PostgreSQL **or** MySQL | PostgreSQL 14+ / MySQL 8+ |
-| Git | Latest |
+| Tool | Version | Needed for |
+|------|---------|-----------|
+| Java JDK | 17 or later | Backend |
+| Maven | 3.8+ (or the included `mvnw` wrapper) | Backend build |
+| Node.js & npm | 18+ | Frontend |
+| PostgreSQL | 14+ | Only for the non-dev profile |
+| Document analysis service | Running on port `8000` | Similarity, AI-detection and citation reports |
+| Git | Latest | Cloning |
 
 ### 1. Clone the repository
 
@@ -285,32 +296,26 @@ git clone <repository-url>
 cd ScholarSync
 ```
 
-### 2. Create the database
-
-**PostgreSQL**
-```sql
-CREATE DATABASE scholarsync;
-```
-
-**MySQL**
-```sql
-CREATE DATABASE scholarsync CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-### 3. Configure the backend
-
-Edit `backend/src/main/resources/application.properties` (see [Configuration](#-configuration)).
-
-### 4. Run the backend
+### 2. Run the backend (quick start, H2 in-memory)
 
 ```bash
 cd backend
-./mvnw spring-boot:run
+./mvnw spring-boot:run          # Windows: mvnw.cmd spring-boot:run
 ```
 
-The API starts on **http://localhost:8080** by default.
+The API starts on **http://localhost:8080** using the `dev` profile. No database setup is required.
 
-### 5. Run the frontend
+Useful dev URLs:
+
+| URL | Purpose |
+|-----|---------|
+| `http://localhost:8080/swagger-ui.html` | Swagger UI |
+| `http://localhost:8080/v3/api-docs` | OpenAPI JSON |
+| `http://localhost:8080/h2-console` | H2 database console |
+
+**H2 console login:** JDBC URL `jdbc:h2:mem:scholarsync` · User `sa` · Password *(empty)*
+
+### 3. Run the frontend
 
 ```bash
 cd frontend
@@ -318,61 +323,96 @@ npm install
 npm run dev
 ```
 
-The web app is available at **http://localhost:5173**.
+Open **http://localhost:5173**.
 
-### 6. Create your first account
+### 4. Start the document analysis service
+
+Document analysis (internal similarity, AI-writing detection and citation verification) runs as a **separate service**, which the backend calls at `http://localhost:8000` by default. Start it before submitting documents, or point `ANALYSIS_SERVICE_URL` at wherever it runs.
+
+> Add the start command for your analysis service here (for example `uvicorn main:app --port 8000`).
+
+Without it the app still runs, but analysis reports on submitted versions will not complete.
+
+### 5. Create your first accounts
 
 1. Open the app and choose **Register**.
-2. Register one account as a **Supervisor** and another as a **Student Researcher**.
-3. As the supervisor, create a **New Project**, assign the student, then open the **Kanban Board** and create tasks.
+2. Register one account as a **Supervisor** and another as a **Student Researcher** (use a second browser or a private window).
+3. As the supervisor, click **New Project**, assign the student, then open the **Kanban Board** and create tasks.
+
+### Running with PostgreSQL (persistent data)
+
+1. Create the database:
+   ```sql
+   CREATE DATABASE scholarsync;
+   ```
+2. Set the connection details (or keep the defaults shown in the table below):
+   ```bash
+   export DB_HOST=localhost
+   export DB_PORT=5432
+   export DB_NAME=scholarsync
+   export DB_USER=postgres
+   export DB_PASSWORD=your_password
+   ```
+3. Start the backend with a non-dev profile so the PostgreSQL configuration is used:
+   ```bash
+   SPRING_PROFILES_ACTIVE=prod ./mvnw spring-boot:run
+   ```
+   On Windows PowerShell:
+   ```powershell
+   $env:SPRING_PROFILES_ACTIVE="prod"; .\mvnw.cmd spring-boot:run
+   ```
+
+Hibernate is set to `ddl-auto: update`, so tables are created automatically on first start.
 
 ---
 
 ## ⚙ Configuration
 
-Example `application.properties`:
+Settings live in `src/main/resources/`:
 
-```properties
-# ── Server ───────────────────────────────────────────
-server.port=8080
+| File | Purpose |
+|------|---------|
+| `application.yml` | Base configuration (PostgreSQL, JWT, uploads, analysis service, Swagger) |
+| `application-dev.yml` | Dev profile: in-memory H2, H2 console, SQL logging |
+| `application-test.yml` | Test profile: isolated in-memory H2 with `create-drop` |
 
-# ── Database (PostgreSQL) ────────────────────────────
-spring.datasource.url=jdbc:postgresql://localhost:5432/scholarsync
-spring.datasource.username=your_db_user
-spring.datasource.password=your_db_password
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=false
+### Environment variables
 
-# ── Database (MySQL alternative) ─────────────────────
-# spring.datasource.url=jdbc:mysql://localhost:3306/scholarsync
-# spring.datasource.username=your_db_user
-# spring.datasource.password=your_db_password
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `DB_HOST` | `localhost` | PostgreSQL host |
+| `DB_PORT` | `5432` | PostgreSQL port |
+| `DB_NAME` | `scholarsync` | Database name |
+| `DB_USER` | `postgres` | Database user |
+| `DB_PASSWORD` | *(set your own)* | Database password |
+| `ANALYSIS_SERVICE_URL` | `http://localhost:8000` | Base URL of the document analysis service |
+| `UPLOAD_DIR` | `uploads/submissions` | Where submitted PDF/DOCX files are stored |
+| `SPRING_PROFILES_ACTIVE` | `dev` | Active Spring profile |
 
-# ── JWT ──────────────────────────────────────────────
-app.jwt.secret=change-this-to-a-long-random-secret
-app.jwt.expiration-ms=86400000
+### Other settings
 
-# ── File uploads ─────────────────────────────────────
-spring.servlet.multipart.max-file-size=25MB
-spring.servlet.multipart.max-request-size=25MB
-app.storage.upload-dir=./uploads
+```yaml
+server:
+  port: 8080
 
-# ── External services ────────────────────────────────
-app.huggingface.api-token=your_huggingface_token
-app.crossref.base-url=https://api.crossref.org
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB        # maximum upload size
+      max-request-size: 50MB
+
+jwt:
+  secret: <base64-encoded 256-bit key>   # HMAC-SHA256 signing key
+  expiration-ms: 86400000                # 24 hours
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
 ```
 
-> ⚠️ **Never commit real secrets.** Use environment variables or a local, git-ignored profile such as `application-local.properties`.
-
-### Environment variables (alternative)
-
-| Variable | Purpose |
-|----------|---------|
-| `SPRING_DATASOURCE_URL` | JDBC connection string |
-| `SPRING_DATASOURCE_USERNAME` | Database user |
-| `SPRING_DATASOURCE_PASSWORD` | Database password |
-| `APP_JWT_SECRET` | JWT signing secret |
-| `APP_HUGGINGFACE_API_TOKEN` | Hugging Face access token |
+> ⚠️ **Security:** the repository's default JWT secret and database password are for local development only. **Replace them before any real deployment** and load them from environment variables or a secrets manager instead of committing them. Generate a new key with `openssl rand -base64 32`.
 
 ---
 
@@ -381,7 +421,7 @@ app.crossref.base-url=https://api.crossref.org
 Interactive documentation is generated with **OpenAPI 3.0** and served through **Swagger UI**:
 
 ```
-http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/swagger-ui.html
 ```
 
 The raw specification is available at:
@@ -444,7 +484,7 @@ Business logic never talks to the WebSocket layer directly: services publish dom
 ## 🧪 Testing
 
 ```bash
-# Backend unit & integration tests
+# Backend unit & integration tests (uses the isolated in-memory "test" profile)
 cd backend
 ./mvnw test
 
