@@ -1,0 +1,57 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 755 >>
+stream
+BT
+/F1 14 Tf
+50 740 Td
+(Mathematical Formulation: Adaptive 1D Spectral Gating) Tj
+/F1 10 Tf
+0 -18 Td
+(Author: Raiyan Islam \(Student Researcher\)) Tj
+0 -18 Td
+(Project: Adaptive Spectral Gating for Efficient Long-Sequence Modeling) Tj
+0 -18 Td
+() Tj
+0 -18 Td
+(Derivation of 1D Discrete Fourier Transform kernel with dynamic frequency masks.) Tj
+0 -18 Td
+(Gradient equations: dL/dF = \(1/N\) * FFT\(dL/dY * conj\(W\)\).) Tj
+0 -18 Td
+(Time complexity: O\(N log N\) vs O\(N^2\) for standard multi-head self attention.) Tj
+0 -18 Td
+() Tj
+0 -18 Td
+(References:) Tj
+0 -18 Td
+(1. Vaswani, A. et al. Attention Is All You Need. DOI: 10.1145/3372278.3390670) Tj
+0 -18 Td
+(2. Cooley, J. W., Tukey, J. W. An Algorithm for Machine Calculation. DOI: 10.1000/182) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000246 00000 n 
+0000000350 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+450
+%%EOF

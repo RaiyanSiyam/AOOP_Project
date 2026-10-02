@@ -259,8 +259,17 @@ def analyze_document(request: AnalyzeRequest):
             similarity_score = round(max(0.0, min(1.0, max_sim)), 4)
             compared_count = len(valid_comparisons)
         except Exception as e:
-            logger.error(f"Failed to compute similarity: {e}")
-            similarity_score = None
+            logger.warning(f"SentenceTransformer unavailable ({e}), falling back to token Jaccard similarity.")
+            doc_words = set(re.findall(r'\w+', request.text.lower()))
+            max_sim = 0.0
+            for comp in valid_comparisons:
+                comp_words = set(re.findall(r'\w+', comp.lower()))
+                if doc_words and comp_words:
+                    sim = len(doc_words & comp_words) / len(doc_words | comp_words)
+                    if sim > max_sim:
+                        max_sim = sim
+            similarity_score = round(max(0.0, min(1.0, max_sim)), 4)
+            compared_count = len(valid_comparisons)
     else:
         # Explicit 0.0 when no previous submissions exist to compare against
         similarity_score = 0.0

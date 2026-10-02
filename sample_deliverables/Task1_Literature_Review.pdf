@@ -1,0 +1,57 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 796 >>
+stream
+BT
+/F1 14 Tf
+50 740 Td
+(Literature Review: Sub-Quadratic Attention Models) Tj
+/F1 10 Tf
+0 -18 Td
+(Author: Raiyan Islam \(Student Researcher\)) Tj
+0 -18 Td
+(Project: Adaptive Spectral Gating for Efficient Long-Sequence Modeling) Tj
+0 -18 Td
+() Tj
+0 -18 Td
+(Abstract: This review investigates spectral neural methods and linear attention.) Tj
+0 -18 Td
+(We compare FlashAttention-2, Mamba, and Fourier Neural Operators on LRA tasks.) Tj
+0 -18 Td
+() Tj
+0 -18 Td
+(Key Citations and References:) Tj
+0 -18 Td
+(1. Dao, T. FlashAttention-2: Faster Attention with Better Parallelism. DOI: 10.1145/3372278.3390670) Tj
+0 -18 Td
+(2. Gu, A., Dao, T. Mamba: Linear-Time Sequence Modeling. DOI: 10.1000/182) Tj
+0 -18 Td
+(3. Li, Z. et al. Fourier Neural Operator for Parametric PDEs. DOI: 10.1109/5.771073) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000246 00000 n 
+0000000350 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+450
+%%EOF
