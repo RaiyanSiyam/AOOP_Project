@@ -81,24 +81,21 @@ Suggested layout once images are ready:
 | Login / Register | Research Workspaces |
 |:---:|:---:|
 | ![Login](docs/screenshots/login.png) | ![Workspaces](docs/screenshots/workspaces.png) |
-<img width="1805" height="855" alt="image" src="https://github.com/user-attachments/assets/58078ae1-5388-4f88-9ec3-196f94b1125f" />
-<img width="1748" height="825" alt="image" src="https://github.com/user-attachments/assets/49e4ba32-8ae6-4ac8-8976-0f4f759a9b06" />
-<img width="1693" height="736" alt="image" src="https://github.com/user-attachments/assets/e660cbdf-3ec1-406b-940e-45157e2721fd" />
-
-
 
 | Kanban Board | Version Submission & Analysis |
 |:---:|:---:|
 | ![Kanban](docs/screenshots/kanban.png) | ![Submission](docs/screenshots/submission.png) |
-<img width="1551" height="760" alt="image" src="https://github.com/user-attachments/assets/efe6a7f2-2b8b-4888-9b3e-0d5cf7faf0a9" />
-<img width="1550" height="815" alt="image" src="https://github.com/user-attachments/assets/2b67009c-9c45-4fd5-9453-5942a14dd83f" />
-<img width="1760" height="837" alt="image" src="https://github.com/user-attachments/assets/d2cb5cec-55e8-48df-be3b-7e2c0348d5f5" />
-
 
 | Supervisor Review | Swagger UI |
 |:---:|:---:|
 | ![Review](docs/screenshots/review.png) | ![Swagger](docs/screenshots/swagger.png) |
 -->
+<img width="1805" height="855" alt="image" src="https://github.com/user-attachments/assets/58078ae1-5388-4f88-9ec3-196f94b1125f" />
+<img width="1748" height="825" alt="image" src="https://github.com/user-attachments/assets/49e4ba32-8ae6-4ac8-8976-0f4f759a9b06" />
+<img width="1693" height="736" alt="image" src="https://github.com/user-attachments/assets/e660cbdf-3ec1-406b-940e-45157e2721fd" />
+<img width="1551" height="760" alt="image" src="https://github.com/user-attachments/assets/efe6a7f2-2b8b-4888-9b3e-0d5cf7faf0a9" />
+<img width="1550" height="815" alt="image" src="https://github.com/user-attachments/assets/2b67009c-9c45-4fd5-9453-5942a14dd83f" />
+<img width="1760" height="837" alt="image" src="https://github.com/user-attachments/assets/d2cb5cec-55e8-48df-be3b-7e2c0348d5f5" />
 <img width="1621" height="841" alt="image" src="https://github.com/user-attachments/assets/1628ea5d-0835-45c5-bf7c-ecd6f65ebee4" />
 
 
